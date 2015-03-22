@@ -1,24 +1,16 @@
 class Game
-  @response_callbacks
   @players
 
   def initialize
-    @response_callbacks = []
     @players = []
   end
 
-  def add_response_callback(callback)
-    @response_callbacks << callback
-  end
-
-  def execute(command)
+  def execute(command, callback)
     matchData = /^add player\s(\S+)/.match(command)
     player = matchData.captures.first
     @players << player
-    @response_callbacks.each do |c|
-      playersTxt = @players.sort().join(', ')
-      c.call("Players: #{playersTxt}")
-    end
+    playersTxt = @players.sort().join(', ')
+    callback.call("Players: #{playersTxt}")
   end
 
 end

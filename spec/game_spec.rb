@@ -5,8 +5,7 @@ describe Game, '"Gioco dell\'oca"' do
     it 'allows the user to add the first player' do
       response = ''
       game = Game.new
-      game.add_response_callback(lambda { |r| response = r })
-      game.execute 'add player Pippo'
+      game.execute 'add player Pippo', lambda { |r| response = r }
       expect(response).to eq 'Players: Pippo'
     end
   end
@@ -15,9 +14,8 @@ describe Game, '"Gioco dell\'oca"' do
     it 'allows the user to add a second player' do
       response = ''
       game = Game.new
-      game.add_response_callback(lambda { |r| response = r })
-      game.execute 'add player Pluto'
-      game.execute 'add player Pippo'
+      game.execute 'add player Pluto', lambda { |r| response = r }
+      game.execute 'add player Pippo', lambda { |r| response = r }
       expect(response).to eq 'Players: Pippo, Pluto'
     end
   end
