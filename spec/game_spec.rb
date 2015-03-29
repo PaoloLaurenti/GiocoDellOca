@@ -5,37 +5,44 @@ require 'game_events'
 describe AddPlayerUseCase, '"Gioco dell\'oca"' do
   RANDOM_TEXT = "asdfsdfasfd1233223@de2AA"
 
+  def update_players_names(players_names)
+    @players += players_names
+  end
+
+  def update_failure_message(message)
+    @fail_message = message
+  end
+
+  before :each do
+    @players = []
+    @fail_message = RANDOM_TEXT
+    @game_id = SecureRandom.uuid
+    @game_persistence_gateway = GamePersistenceGatewayTestDouble.new
+    @game_events = GameEvents.new
+  end
+
   context 'when there are no player' do
     it 'allows the user to add the first player' do
-      players = []
-      fail_message = RANDOM_TEXT
-      game_id = SecureRandom.uuid
-      game_persistence_gateway = GamePersistenceGatewayTestDouble.new
-      game_persistence_gateway.setup_game_events(game_id, GameEvents.new)
-      AddPlayerUseCase.new(game_id, 'Pippo', game_persistence_gateway, lambda { |p| players += p },
-                           lambda { |s| fail_message = s })
+      @game_persistence_gateway.setup_game_events(@game_id, @game_events)
+      AddPlayerUseCase.new(@game_id, 'Pippo', @game_persistence_gateway, method(:update_players_names),
+                           method(:update_failure_message))
                       .execute
 
-      expect(players).to eq ['Pippo']
-      expect(fail_message).to eq RANDOM_TEXT
+      expect(@players).to eq ['Pippo']
+      expect(@fail_message).to eq RANDOM_TEXT
     end
   end
 
   context 'when there is already a player' do
     it 'allows the user to add a second player' do
-      players = []
-      fail_message = RANDOM_TEXT
-      game_id = SecureRandom.uuid
-      game_persistence_gateway = GamePersistenceGatewayTestDouble.new
-      game_events = GameEvents.new
-      game_events.events << 'PLAYER_ADDED@_@Pippo'
-      game_persistence_gateway.setup_game_events(game_id, game_events)
-      AddPlayerUseCase.new(game_id, 'Pluto', game_persistence_gateway, lambda { |p| players += p },
-                           lambda { |s| fail_message = s })
+      @game_events.events << 'PLAYER_ADDED@_@Pippo'
+      @game_persistence_gateway.setup_game_events(@game_id, @game_events)
+      AddPlayerUseCase.new(@game_id, 'Pluto', @game_persistence_gateway, method(:update_players_names),
+                           method(:update_failure_message))
                       .execute
 
-      expect(players).to eq ['Pippo', 'Pluto']
-      expect(fail_message).to eq RANDOM_TEXT
+      expect(@players).to match_array ['Pippo', 'Pluto']
+      expect(@fail_message).to eq RANDOM_TEXT
     end
   end
 end
