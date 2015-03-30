@@ -23,7 +23,7 @@ describe AddPlayerUseCase, '"Gioco dell\'oca"' do
 
   context 'when there are no player' do
     it 'allows the user to add the first player' do
-      @game_persistence_gateway.setup_game_events(@game_id, @game_events)
+      @game_persistence_gateway.setup_already_existing_game_events(@game_id, @game_events)
       AddPlayerUseCase.new(@game_id, 'Pippo', @game_persistence_gateway, method(:update_players_names),
                            method(:update_failure_message))
                       .execute
@@ -36,7 +36,7 @@ describe AddPlayerUseCase, '"Gioco dell\'oca"' do
   context 'when there is already a player' do
     it 'allows the user to add a second player' do
       @game_events.events << 'PLAYER_ADDED@_@Pippo'
-      @game_persistence_gateway.setup_game_events(@game_id, @game_events)
+      @game_persistence_gateway.setup_already_existing_game_events(@game_id, @game_events)
       AddPlayerUseCase.new(@game_id, 'Pluto', @game_persistence_gateway, method(:update_players_names),
                            method(:update_failure_message))
                       .execute

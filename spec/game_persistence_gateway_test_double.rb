@@ -12,7 +12,7 @@ class GamePersistenceGatewayTestDouble
   def save(game_id, game_events)
   end
 
-  def setup_game_events(game_id, game_events)
+  def setup_already_existing_game_events(game_id, game_events)
     @store[game_id] = game_events
   end
 end
