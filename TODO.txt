@@ -1,0 +1,3 @@
+- generate RANDOM TEXT as a real random text
+- create a unified method to add player inside spec
+- create specific methods for expectations

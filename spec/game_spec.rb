@@ -3,8 +3,6 @@ require 'game_persistence_gateway_test_double'
 require 'game_events'
 
 describe AddPlayerUseCase, '"Gioco dell\'oca"' do
-  RANDOM_TEXT = "asdfsdfasfd1233223@de2AA"
-
   def update_players_names(players)
     @presentable_players += players
   end
@@ -13,9 +11,14 @@ describe AddPlayerUseCase, '"Gioco dell\'oca"' do
     @fail_message = message
   end
 
+  def get_random_text()
+    (0...50).map { ('a'..'z').to_a[rand(26)] }.join
+  end
+
   before :each do
     @presentable_players = []
-    @fail_message = RANDOM_TEXT
+    @initial_fail_message = get_random_text()
+    @fail_message = @initial_fail_message
     @game_id = SecureRandom.uuid
     @game_persistence_gateway = GamePersistenceGatewayTestDouble.new
     @game_events = GameEvents.new
@@ -33,7 +36,7 @@ describe AddPlayerUseCase, '"Gioco dell\'oca"' do
                       .execute
 
       expect(@presentable_players).to eq ['Pippo']
-      expect(@fail_message).to eq RANDOM_TEXT
+      expect(@fail_message).to eq @initial_fail_message
     end
   end
 
@@ -50,7 +53,7 @@ describe AddPlayerUseCase, '"Gioco dell\'oca"' do
                       .execute
 
       expect(@presentable_players).to match_array ['Pippo', 'Pluto']
-      expect(@fail_message).to eq RANDOM_TEXT
+      expect(@fail_message).to eq @initial_fail_message
     end
   end
 end
