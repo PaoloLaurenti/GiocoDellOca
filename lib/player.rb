@@ -1,7 +1,14 @@
+require 'presentable_player'
+
 class Player
-  attr_reader :name
+  @name
 
   def initialize(name)
     @name = name
+  end
+
+  def to_presentable
+    presentable_player = PresentablePlayer.new
+    presentable_player.name = @name
   end
 end

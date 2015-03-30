@@ -5,8 +5,8 @@ require 'game_events'
 describe AddPlayerUseCase, '"Gioco dell\'oca"' do
   RANDOM_TEXT = "asdfsdfasfd1233223@de2AA"
 
-  def update_players_names(players_names)
-    @players += players_names
+  def update_players_names(players)
+    @presentable_players += players
   end
 
   def update_failure_message(message)
@@ -14,7 +14,7 @@ describe AddPlayerUseCase, '"Gioco dell\'oca"' do
   end
 
   before :each do
-    @players = []
+    @presentable_players = []
     @fail_message = RANDOM_TEXT
     @game_id = SecureRandom.uuid
     @game_persistence_gateway = GamePersistenceGatewayTestDouble.new
@@ -32,7 +32,7 @@ describe AddPlayerUseCase, '"Gioco dell\'oca"' do
                            method(:update_failure_message))
                       .execute
 
-      expect(@players).to eq ['Pippo']
+      expect(@presentable_players).to eq ['Pippo']
       expect(@fail_message).to eq RANDOM_TEXT
     end
   end
@@ -49,7 +49,7 @@ describe AddPlayerUseCase, '"Gioco dell\'oca"' do
                            method(:update_failure_message))
                       .execute
 
-      expect(@players).to match_array ['Pippo', 'Pluto']
+      expect(@presentable_players).to match_array ['Pippo', 'Pluto']
       expect(@fail_message).to eq RANDOM_TEXT
     end
   end

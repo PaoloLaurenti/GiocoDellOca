@@ -14,10 +14,7 @@ class Game
 
   def add_player(player_name)
     @players << Player.new(player_name)
-    players_names =  @players.map { |p| p.name }
-    @players_changed_listeners.each do |p|
-      p.call(players_names)
-    end
+    notify_players_has_changed()
   end
 
   def do_with_events(something_to_do)
@@ -28,11 +25,22 @@ class Game
 
   def initialize(game_events)
     @players_changed_listeners = []
-
     @players = []
+    load_current_game_state_by(game_events)
+  end
+
+  def notify_players_has_changed
+    @players_changed_listeners.each do |p|
+      p.call(@players.map {|p| p.to_presentable() })
+    end
+  end
+
+  def load_current_game_state_by(game_events)
     game_events.events.each do |ge|
-      if ge.start_with?('PLAYER_ADDED')
-        player_name = ge.split('@_@')[1]
+      event_tokens = ge.split('@_@')
+
+      if event_tokens.first == 'PLAYER_ADDED'
+        player_name = event_tokens[1]
         @players << Player.new(player_name)
       end
     end
