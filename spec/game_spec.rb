@@ -1,4 +1,4 @@
-require 'add_player_use_case'
+require 'use_case/add_player_use_case'
 require 'game_persistence_gateway_test_double'
 require 'game_events'
 
