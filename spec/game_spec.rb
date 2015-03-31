@@ -16,12 +16,13 @@ describe AddPlayerUseCase, '"Gioco dell\'oca"' do
   end
 
   def add_game_player(player_name)
-    AddPlayerUseCase.new(@game_id,
-    player_name,
-    @game_persistence_gateway,
-    method(:update_players_names),
-    method(:update_failure_message))
-    .execute
+    AddPlayerUseCase.new(@game_id, player_name, @game_persistence_gateway, method(:update_players_names),
+                         method(:update_failure_message))
+                    .execute
+  end
+
+  def verify_no_failure_message_has_been_notified
+    expect(@fail_message).to eq @initial_fail_message
   end
 
   before :each do
@@ -40,26 +41,25 @@ describe AddPlayerUseCase, '"Gioco dell\'oca"' do
       add_game_player('Pippo')
 
       expect(@presentable_players).to eq ['Pippo']
-      expect(@fail_message).to eq @initial_fail_message
+      verify_no_failure_message_has_been_notified()
     end
   end
 
   context 'when there is already a player' do
-    it 'allows the user to add a second player' do
-      @game_events.events << 'PLAYER_ADDED@_@Pluto'
+    before :each do
+      @game_events.events << 'PLAYER_ADDED@_@Pippo'
       @game_persistence_gateway.setup_already_existing_game_events(@game_id, @game_events)
+    end
 
-      add_game_player('Pippo')
+    it 'allows the user to add a second player' do
+      add_game_player('Pluto')
 
       expect(@presentable_players).to match_array ['Pippo', 'Pluto']
-      expect(@fail_message).to eq @initial_fail_message
+      verify_no_failure_message_has_been_notified()
     end
 
     context 'when the user tries to add a player with the same name of the first one' do
       it 'notifies that the player already exists' do
-        @game_events.events << 'PLAYER_ADDED@_@Pippo'
-        @game_persistence_gateway.setup_already_existing_game_events(@game_id, @game_events)
-
         add_game_player('Pippo')
 
         expect(@presentable_players).to eq []
