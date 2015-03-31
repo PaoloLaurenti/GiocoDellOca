@@ -19,7 +19,7 @@ class AddPlayerUseCase
     game_events = @game_persistence_gateway.get_game_events_by(@game_id)
     game = Game.create_by(game_events)
     game.add_players_changed_listener(@on_success)
-    
-    game.add_player(@player_name)
+
+    game.add_player(@player_name, @on_failure)
   end
 end

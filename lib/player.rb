@@ -11,4 +11,8 @@ class Player
     presentable_player = PresentablePlayer.new
     presentable_player.name = @name
   end
+
+  def has_name?(name)
+    name == @name
+  end
 end

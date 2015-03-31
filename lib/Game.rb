@@ -12,7 +12,12 @@ class Game
     @players_changed_listeners << callback_listener
   end
 
-  def add_player(player_name)
+  def add_player(player_name, on_failure)
+    unless can_I_add_player?(player_name)
+      on_failure.call("Player '#{player_name}' already exists")
+      return
+    end
+
     @players << Player.new(player_name)
     notify_players_has_changed()
   end
@@ -44,5 +49,9 @@ class Game
         @players << Player.new(player_name)
       end
     end
+  end
+
+  def can_I_add_player?(player_name)
+    @players.all? { |p| !p.has_name?(player_name) }
   end
 end
