@@ -2,7 +2,7 @@ require 'use_case/add_player_use_case'
 require 'game_persistence_gateway_test_double'
 require 'game_events'
 
-describe AddPlayerUseCase, '"Gioco dell\'oca"' do
+describe AddPlayerUseCase do
   def update_players_names(players)
     @presentable_players += players
   end
